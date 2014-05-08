@@ -1,0 +1,26 @@
+{
+  "name": "derby-boilerplate",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "derby": "0.6.0-alpha5",
+    "express": "~4.1.1",
+    "redis": "~0.10.1",
+    "connect-redis": "*",
+    "cookie-parser": "~1.0.1",
+    "express-session": "~1.0.4",
+    "serve-static": "~1.1.0",
+    "racer-browserchannel": "~0.1.1",
+    "livedb-mongo": "~0.3.2",
+    "racer-bundle": "~0.1.1",
+    "serve-favicon": "~2.0.0",
+    "compression": "~1.0.2"
+  },
+  "author": "Artur Zayats",
+  "license": "MIT"
+}
