@@ -2,7 +2,7 @@
 var express             = require('express');
 
 // В 4-ом экспрессе все middleware вынесены в отдельные модули
-// приходится кадый из них подключать по отдельности
+// приходится каждый из них подключать по отдельности
 var session             = require('express-session');
 
 // Сессии будем хранить в монге
@@ -74,7 +74,7 @@ exports.setup = function setup(app, options) {
 }
 
 // Пробрасываем id-юзера из сессии в модель дерби,
-// если в сесси id нет - генерим случайное
+// если в сессии id нет - генерим случайное
 function createUserId(req, res, next) {
   var model = req.getModel();
   var userId = req.session.userId;
