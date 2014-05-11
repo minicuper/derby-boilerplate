@@ -1,20 +1,21 @@
 var derby = require('derby');
 
-exports.run = run;
+exports.run = function (app, options, cb) {
 
-function run(app, options, cb) {
-  options || (options = {});
+  options = options || {};
   var port = options.port || process.env.PORT || 3000;
 
-  function listenCallback(err) {
-    console.log('%d listening. Go to: http://localhost:%d/', process.pid, port);
-    cb && cb(err);
-  }
+  derby.run(createServer);
+
   function createServer() {
     if (typeof app === 'string') app = require(app);
+
     var expressApp = require('./server.js').setup(app, options);
+
     var server = require('http').createServer(expressApp);
-    server.listen(port, listenCallback);
+    server.listen(port, function (err) {
+      console.log('%d listening. Go to: http://localhost:%d/', process.pid, port);
+      cb && cb(err);
+    });
   }
-  derby.run(createServer);
 }
