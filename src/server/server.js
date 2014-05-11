@@ -1,72 +1,80 @@
-// Express 4
+// 4-ый экспресс
 var express             = require('express');
 
-// Express classic middlware (we should require them explicitly for Express 4)
-var midSession          = require('express-session');
-var midStatic           = require('serve-static');
-var midCookieParser     = require('cookie-parser');
+// В 4-ом экспрессе все middleware вынесены в отдельные модули
+// приходится кадый из них подключать по отдельности
+var session             = require('express-session');
 
-var MongoStore          = require('connect-mongo')(midSession);
+// Сессии будем хранить в монге
+var MongoStore          = require('connect-mongo')(session);
 
-// Error hander (I moved it out)
+// Обработчик ошибок - я вынес его в отдельную папочку,
+// чтобы не отвекал
 var midError            = require('./error');
 
-// Derby
 var derby               = require('derby');
 
-// BrowserChannel is socket.io analog from Google (for Derby)
-// liveDbMongo is mongoDb driver (for Derby)
+// BrowserChannel - аналог socket.io от Гугла - транспорт, используемый
+// дерби, для передачи данных из браузеров на сервер
+
+// liveDbMongo - драйвер монги для дерби - умеет реактивно обновлять данные
 var racerBrowserChannel = require('racer-browserchannel');
 var liveDbMongo         = require('livedb-mongo');
 
+// Подключаем механизм создания бандлов browserify
 derby.use(require('racer-bundle'));
 
-exports.setup = setup;
-
-function setup(app, options) {
+exports.setup = function setup(app, options) {
 
   var mongoUrl = process.env.MONGO_URL || process.env.MONGOHQ_URL || 'mongodb://localhost:27017/derby-app';
-  // The store creates models and syncs data
+
+  // Инициализируем подкючение к БД (здесь же обычно подключается еще и redis)
   var store = derby.createStore({
     db: liveDbMongo(mongoUrl + '?auto_reconnect', {safe: true})
   });
 
   var expressApp = express()
-    // Respond to requests for application script bundles
-    .use(app.scripts(store))
+
+  // Respond to requests for application script bundles
+  expressApp.use(app.scripts(store));
 
   if (options && options.static) {
-    expressApp.use(midStatic(options.static));
+    expressApp.use(require('serve-static')(options.static));
   }
 
-  expressApp
-    // Add browserchannel client-side scripts to model bundles created by store,
-    // and return middleware for responding to remote client messages
-    .use(racerBrowserChannel(store))
-    // Adds req.getModel method
-    .use(store.modelMiddleware())
+  // Add browserchannel client-side scripts to model bundles created by store,
+  // and return middleware for responding to remote client messages
+  expressApp.use(racerBrowserChannel(store));
 
-    .use(midCookieParser())
-    .use(midSession({
-      secret: process.env.SESSION_SECRET || 'YOUR SECRET HERE'
-    , store: new MongoStore({url: mongoUrl})
-    }))
-    .use(createUserId)
+  // Adds req.getModel method
+  expressApp.use(store.modelMiddleware());
 
-    // Creates an express middleware from the app's routes
-    .use(app.router())
+  expressApp.use(require('cookie-parser')());
+  expressApp.use(session({
+    secret: process.env.SESSION_SECRET || 'YOUR SECRET HERE',
+    store: new MongoStore({url: mongoUrl})
+  }));
 
-    // Express routing should by placed HERE
+  expressApp.use(createUserId);
 
-    // Defauld route - generate 404 error
-    .all('*', function(req, res, next) { next('404: ' + req.url); })
+  // Здесь регистрируем контроллеры дерби-приложения,
+  // они будут срабатывать, когда пользователь будет брать страницы
+  // с сервера
+  expressApp.use(app.router());
 
-    // Error handling
-    .use(midError())
+  // Если бы у на были обычные экспрессовские роуты - мы бы положили их СЮДА
+
+  // Маршрут по умолчанию - генерируем 404 ошибку
+  expressApp.all('*', function(req, res, next) { next('404: ' + req.url); });
+
+  // Обработчик ошибок
+  expressApp.use(midError());
 
   return expressApp;
 }
 
+// Пробрасываем id-юзера из сессии в модель дерби,
+// если в сесси id нет - генерим случайное
 function createUserId(req, res, next) {
   var model = req.getModel();
   var userId = req.session.userId;
