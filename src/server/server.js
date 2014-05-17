@@ -35,18 +35,23 @@ exports.setup = function setup(app, options) {
 
   var expressApp = express()
 
-  // Respond to requests for application script bundles
+  // Здесь приложение отдает свой "бандл"
+  // (т.е. здесь обрабатываются запросы к /derby/...)
   expressApp.use(app.scripts(store));
 
   if (options && options.static) {
     expressApp.use(require('serve-static')(options.static));
   }
 
-  // Add browserchannel client-side scripts to model bundles created by store,
-  // and return middleware for responding to remote client messages
+  // Здесь в бандл добавляется клиетский скрипт browserchannel,
+  // и возвращается middleware обрабатывающее клиентские сообщения
+  // (browserchannel основан на longpooling - т.е. здесь обрабатываются
+  // запросы по адресу /channel)
   expressApp.use(racerBrowserChannel(store));
 
-  // Adds req.getModel method
+  // В req добавляется метод getModel, позволяющий обычным
+  // express-овским котроллерам читать и писать в БД
+  // см. createUserId
   expressApp.use(store.modelMiddleware());
 
   expressApp.use(require('cookie-parser')());
