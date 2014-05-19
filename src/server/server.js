@@ -26,11 +26,9 @@ derby.use(require('racer-bundle'));
 
 exports.setup = function setup(app, options) {
 
-  var mongoUrl = process.env.MONGO_URL || process.env.MONGOHQ_URL || 'mongodb://localhost:27017/derby-app';
-
   // Инициализируем подкючение к БД (здесь же обычно подключается еще и redis)
   var store = derby.createStore({
-    db: liveDbMongo(mongoUrl + '?auto_reconnect', {safe: true})
+    db: liveDbMongo(process.env.MONGO_URL + '?auto_reconnect', {safe: true})
   });
 
   var expressApp = express()
@@ -56,8 +54,8 @@ exports.setup = function setup(app, options) {
 
   expressApp.use(require('cookie-parser')());
   expressApp.use(session({
-    secret: process.env.SESSION_SECRET || 'YOUR SECRET HERE',
-    store: new MongoStore({url: mongoUrl})
+    secret: process.env.SESSION_SECRET,
+    store: new MongoStore({url: process.env.MONGO_URL})
   }));
 
   expressApp.use(createUserId);
