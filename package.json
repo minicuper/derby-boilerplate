@@ -1,24 +1,34 @@
 {
-  "name": "derby-boilerplate",
-  "version": "0.0.1",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "dependencies": {
-    "derby": "0.6.0-alpha5",
-    "express": "~4.1.1",
-    "cookie-parser": "~1.0.1",
-    "express-session": "~1.0.4",
-    "serve-static": "~1.1.0",
-    "racer-browserchannel": "~0.1.1",
-    "livedb-mongo": "~0.3.2",
-    "racer-bundle": "~0.1.1",
-    "compression": "~1.0.2",
-    "connect-mongo": "~0.4.1"
-  },
-  "author": "Artur Zayats",
-  "license": "MIT"
+    "name": "derby-boilerplate",
+    "version": "0.0.2",
+    "description": "A generic server for use with Derby apps",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "dependencies": {
+        "derby": "0.6.0-alpha7",
+        "express": "~4.1.1",
+        "cookie-parser": "~1.0.1",
+        "express-session": "~1.0.4",
+        "serve-static": "~1.1.0",
+        "racer-browserchannel": "~0.1.1",
+        "livedb-mongo": "~0.3.2",
+        "racer-bundle": "~0.1.1",
+        "compression": "~1.0.2",
+        "connect-mongo": "~0.4.1",
+        "nconf": "~0.6"
+    },
+    "author": "Artur Zayats",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/zag2art/derby-boilerplate.git"
+    },
+    "bugs": {
+        "url": "https://github.com/zag2art/derby-boilerplate/issues"
+    },
+    "readme": "derby boilerplate\n",
+    "readmeFilename": "README.md"
 }

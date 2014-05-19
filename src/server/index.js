@@ -1,9 +1,20 @@
 var derby = require('derby');
+var config = require('./config');
+
+process.env.NODE_ENV = config.get('environment');
+process.env.MONGO_URL = config.get('mongodb:uri');
+process.env.SESSION_SECRET = config.get('session:secret');
+process.env.SESSION_KEY = config.get('session:key');
+process.env.SESSION_COOKIE = config.get('session:cookie');
+process.env.PORT = config.get('port');
+
+var options = {
+    static: __dirname + './../public'
+};
 
 exports.run = function (app, options, cb) {
 
   options = options || {};
-  var port = options.port || process.env.PORT || 3000;
 
   derby.run(createServer);
 
@@ -13,8 +24,8 @@ exports.run = function (app, options, cb) {
     var expressApp = require('./server.js').setup(app, options);
 
     var server = require('http').createServer(expressApp);
-    server.listen(port, function (err) {
-      console.log('%d listening. Go to: http://localhost:%d/', process.pid, port);
+    server.listen(process.env.PORT, function (err) {
+      console.log('%d listening. Go to: http://localhost:%d/', process.pid, process.env.PORT);
       cb && cb(err);
     });
   }
