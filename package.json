@@ -1,6 +1,6 @@
 {
     "name": "derby-boilerplate",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "A generic server for use with Derby apps",
     "main": "index.js",
     "scripts": {
@@ -9,16 +9,18 @@
     },
     "dependencies": {
         "derby": "0.6.0-alpha7",
-        "express": "~4.1.1",
-        "cookie-parser": "~1.0.1",
-        "express-session": "~1.0.4",
+        "express": "~4.2.0",
+        "cookie-parser": "~1.1.0",
+        "express-session": "~1.2.0",
         "serve-static": "~1.1.0",
         "racer-browserchannel": "~0.1.1",
         "livedb-mongo": "~0.3.2",
         "racer-bundle": "~0.1.1",
         "compression": "~1.0.2",
         "connect-mongo": "~0.4.1",
-        "nconf": "~0.6"
+        "nconf": "~0.6.0",
+        "redis": "~0.10.0",
+        "connect-redis": "~2.0.0"
     },
     "author": "Artur Zayats",
     "license": "MIT",
