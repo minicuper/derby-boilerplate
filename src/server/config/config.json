@@ -4,13 +4,24 @@
     "mongodb": {
         "uri": "mongodb://localhost:27017/derby-app"
     },
+    "redis": {
+        "host": "",
+        "port": "6379",
+        "ttl": "",
+        "db": "1",
+        "user": "",
+        "pass": "",
+        "prefix": "sess:"
+    },
     "session": {
         "secret": "KillerIsJim",
         "key": "sid",
         "cookie": {
             "path": "/",
             "httpOnly": true,
-            "maxAge": null
+            "maxAge": null,
+            "domain": ".",
+            "secure": false
         }
     }
 }
