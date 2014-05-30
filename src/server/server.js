@@ -5,6 +5,13 @@ var express = require('express');
 // приходится каждый из них подключать по отдельности
 var session = require('express-session');
 
+//Serve static files
+var serveStatic = require('serve-static');
+//Compression middleware
+var compression = require('compression');
+//favicon serving middleware
+var favicon = require('serve-favicon');
+
 //Подключаем store
 var connectStore, sessionStore;
 if (process.env.REDIS_HOST) {
@@ -37,7 +44,7 @@ var liveDbMongo = require('livedb-mongo');
 // Подключаем механизм создания бандлов browserify
 derby.use(require('racer-bundle'));
 
-exports.setup = function setup(app, options) {
+exports.setup = function setup(app, options, cb) {
 
     // Инициализируем подкючение к БД (здесь же обычно подключается еще и redis)
     var store = derby.createStore({
@@ -46,14 +53,24 @@ exports.setup = function setup(app, options) {
     });
 
     var expressApp = express()
+        .use(favicon(__dirname + '/../../public/images/favicon.ico'))
+        .use(compression())
 
     // Здесь приложение отдает свой "бандл"
     // (т.е. здесь обрабатываются запросы к /derby/...)
     expressApp.use(app.scripts(store));
 
     if (options && options.static) {
-        expressApp.use(require('serve-static')(options.static));
+        if (Array.isArray(options.static)) {
+            for (var i = 0; i < options.static.length; i++) {
+                var o = options.static[i];
+                expressApp.use(o.route, serveStatic(o.dir));
+            }
+        } else {
+            expressApp.use(serveStatic(options.static));
+        }
     }
+
 
     // Здесь в бандл добавляется клиетский скрипт browserchannel,
     // и возвращается middleware обрабатывающее клиентские сообщения

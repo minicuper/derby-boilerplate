@@ -1,5 +1,5 @@
 var derby = require('derby');
-var app = module.exports = derby.createApp('auth', __filename);
+var app = module.exports = derby.createApp('derby-app', __filename);
 
 global.app = app;
 
