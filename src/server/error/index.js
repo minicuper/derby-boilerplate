@@ -3,6 +3,7 @@ var derby = require('derby');
 module.exports = function () {
     var errorApp = derby.createApp();
     errorApp.loadViews(__dirname + '/views/error');
+    errorApp.loadStyles(__dirname + '/styles/reset');
     errorApp.loadStyles(__dirname + '/styles/error');
 
     return function (err, req, res, next) {

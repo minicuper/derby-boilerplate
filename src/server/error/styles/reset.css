@@ -1,5 +1,3 @@
-@import "nib/vendor";
-
 body,h1,h2,h3,h4,input,pre,select,textarea,th {
   font: 13px/normal arial,sans-serif;
 }

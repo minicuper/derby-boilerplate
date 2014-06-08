@@ -7,8 +7,10 @@ var session = require('express-session');
 
 //Serve static files
 var serveStatic = require('serve-static');
+
 //Compression middleware
 var compression = require('compression');
+
 //favicon serving middleware
 var favicon = require('serve-favicon');
 
@@ -41,6 +43,9 @@ var derby = require('derby');
 var racerBrowserChannel = require('racer-browserchannel');
 var liveDbMongo = require('livedb-mongo');
 
+// Для любителей coffee
+var coffeeify = require('coffeeify');
+
 // Подключаем механизм создания бандлов browserify
 derby.use(require('racer-bundle'));
 
@@ -52,25 +57,42 @@ exports.setup = function setup(app, options, cb) {
         redis: redisClient
     });
 
-    var expressApp = express()
-        .use(favicon(__dirname + '/../../public/images/favicon.ico'))
-        .use(compression())
+    var publicDir = options.static || __dirname + '/../../public';
 
     // Здесь приложение отдает свой "бандл"
     // (т.е. здесь обрабатываются запросы к /derby/...)
-    expressApp.use(app.scripts(store));
+    store.on('bundle', function(browserify) {
+        // Add support for directly requiring coffeescript in browserify bundles
+        browserify.transform({global: true}, coffeeify);
 
-    if (options && options.static) {
-        if (Array.isArray(options.static)) {
-            for (var i = 0; i < options.static.length; i++) {
-                var o = options.static[i];
+        // HACK: In order to use non-complied coffee node modules, we register it
+        // as a global transform. However, the coffeeify transform needs to happen
+        // before the include-globals transform that browserify hard adds as the
+        // first trasform. This moves the first transform to the end as a total
+        // hack to get around this
+        var pack = browserify.pack;
+        browserify.pack = function(opts) {
+            var detectTransform = opts.globalTransform.shift();
+            opts.globalTransform.push(detectTransform);
+            return pack.apply(this, arguments);
+        };
+    });
+
+    var expressApp = express()
+        .use(favicon(publicDir + '/images/favicon.ico'))
+        .use(compression())
+        .use(serveStatic(publicDir));
+
+    if (publicDir) {
+        if (Array.isArray(publicDir)) {
+            for (var i = 0; i < publicDir.length; i++) {
+                var o = publicDir[i];
                 expressApp.use(o.route, serveStatic(o.dir));
             }
         } else {
-            expressApp.use(serveStatic(options.static));
+            expressApp.use(serveStatic(publicDir));
         }
     }
-
 
     // Здесь в бандл добавляется клиетский скрипт browserchannel,
     // и возвращается middleware обрабатывающее клиентские сообщения
@@ -104,7 +126,9 @@ exports.setup = function setup(app, options, cb) {
     // Обработчик ошибок
     expressApp.use(midError());
 
-    return expressApp;
+    app.writeScripts(store, publicDir, {extensions: ['.coffee']}, function(err) {
+        cb(err, expressApp);
+    });
 }
 
 // Пробрасываем id-юзера из сессии в модель дерби,

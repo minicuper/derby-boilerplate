@@ -12,10 +12,10 @@ process.env.REDIS_PORT = config.get('redis:port');
 process.env.REDIS_PASSWORD = config.get('redis:pass');
 
 var options = {
-    static: __dirname + './../public'
+    static: __dirname + '/../../public'
 };
 
-exports.run = function (app, options, cb) {
+/*exports.run = function (app, options, cb) {
 
     options = options || {};
 
@@ -32,4 +32,22 @@ exports.run = function (app, options, cb) {
             cb && cb(err);
         });
     }
+}*/
+
+exports.run = function run(app, options, cb) {
+    options || (options = {});
+
+    function listenCallback(err) {
+        console.log('%d listening. Go to: http://localhost:%d/', process.pid, process.env.PORT);
+        cb && cb(err);
+    }
+    function createServer() {
+        if (typeof app === 'string') app = require(app);
+        require('./server').setup(app, options, function(err, expressApp) {
+            if (err) throw err;
+            var server = require('http').createServer(expressApp);
+            server.listen(process.env.PORT, listenCallback);
+        });
+    }
+    derby.run(createServer);
 }
