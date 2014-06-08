@@ -15,25 +15,6 @@ var options = {
     static: __dirname + '/../../public'
 };
 
-/*exports.run = function (app, options, cb) {
-
-    options = options || {};
-
-    derby.run(createServer);
-
-    function createServer() {
-        if (typeof app === 'string') app = require(app);
-
-        var expressApp = require('./server.js').setup(app, options);
-
-        var server = require('http').createServer(expressApp);
-        server.listen(process.env.PORT, function (err) {
-            console.log('%d listening. Go to: http://localhost:%d/', process.pid, process.env.PORT);
-            cb && cb(err);
-        });
-    }
-}*/
-
 exports.run = function run(app, options, cb) {
     options || (options = {});
 
