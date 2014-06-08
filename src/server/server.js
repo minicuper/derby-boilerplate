@@ -80,8 +80,7 @@ exports.setup = function setup(app, options, cb) {
 
     var expressApp = express()
         .use(favicon(publicDir + '/images/favicon.ico'))
-        .use(compression())
-        .use(serveStatic(publicDir));
+        .use(compression());
 
     if (publicDir) {
         if (Array.isArray(publicDir)) {
