@@ -36,6 +36,8 @@ var midError = require('./error');
 
 var derby = require('derby');
 
+var path = require('path');
+
 // BrowserChannel - аналог socket.io от Гугла - транспорт, используемый
 // дерби, для передачи данных из браузеров на сервер
 
@@ -57,7 +59,7 @@ exports.setup = function setup(app, options, cb) {
         redis: redisClient
     });
 
-    var publicDir = options.static || __dirname + '/../../public';
+    var publicDir = options.static || path.join(__dirname, '/../../public');
 
     // Здесь приложение отдает свой "бандл"
     // (т.е. здесь обрабатываются запросы к /derby/...)
@@ -79,7 +81,7 @@ exports.setup = function setup(app, options, cb) {
     });
 
     var expressApp = express()
-        .use(favicon(publicDir + '/images/favicon.ico'))
+        .use(favicon(path.join(publicDir, '/images/favicon.ico')))
         .use(compression());
 
     if (publicDir) {

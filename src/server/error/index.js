@@ -1,10 +1,11 @@
 var derby = require('derby');
+var path = require('path');
 
 module.exports = function () {
     var errorApp = derby.createApp();
-    errorApp.loadViews(__dirname + '/views/error');
-    errorApp.loadStyles(__dirname + '/styles/reset');
-    errorApp.loadStyles(__dirname + '/styles/error');
+    errorApp.loadViews(path.join(__dirname, '/views/error'));
+    errorApp.loadStyles(path.join(__dirname, '/styles/reset'));
+    errorApp.loadStyles(path.join(__dirname, '/styles/error'));
 
     return function (err, req, res, next) {
         console.log('error');
