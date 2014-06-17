@@ -1,6 +1,6 @@
 {
   "name": "derby-boilerplate",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A generic server for use with Derby apps",
   "main": "index.js",
   "scripts": {
