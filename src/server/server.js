@@ -105,10 +105,11 @@ exports.setup = function setup(app, options, cb) {
   // express-овским котроллерам читать и писать в БД см. createUserId
   expressApp.use(store.modelMiddleware());
 
-  expressApp.use(require('cookie-parser')(process.env.SESSION_COOKIE));
+  expressApp.use(require('cookie-parser')());
   expressApp.use(session({
     secret: process.env.SESSION_SECRET,
-    store: sessionStore
+    store: sessionStore,
+    cookie: process.env.SESSION_COOKIE
   }));
 
   expressApp.use(createUserId);
