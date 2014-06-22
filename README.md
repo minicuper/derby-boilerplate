@@ -1,6 +1,9 @@
 derby-boilerplate
 =============
 
+DEPRECATED. DO NOT USE.
+Instead use [generator-derby](https://github.com/derbyparty/generator-derby) to make new Derby 0.6 apps!
+
 Template of Derby 0.6 application
 
 * JavaScript
